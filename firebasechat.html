@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Firebase Chat</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+
+			body {
+			    margin: 0 auto;
+			    max-width: 800px;
+			    padding: 0 20px;
+			}
+
+			.my_message_container {
+			    border: 2px solid #dedede;
+			    background-color: #f1f1f1;
+			    border-radius: 5px;
+			    padding: 10px;
+			    margin: 10px 0;
+			    width: 50%;
+			    float: right;
+			}
+
+			.support_message_container {
+			    border-color: #ccc;
+			    border: 2px solid #dedede;
+			    background-color: #f1f1f1;
+			    border-radius: 5px;
+			    padding: 10px;
+			    margin: 10px 0;
+			    background-color: #ddd;
+			    width: 50%;
+			    float: left;
+			}
+			.input_field {
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				display: block;
+			}
+/*			.mymessage_container,.support_message_container::after {
+			    content: "";
+			    clear: both;
+			    display: block;
+			}*/
+
+		</style>
+		<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+		<script>
+		  // Initialize Firebase
+		  	var config = {
+			    apiKey: "AIzaSyDB9r7EQL6KiqhdXtNUOrhvlMVSDafBTLY",//"AIzaSyA-J6a6_Quz2mqlodsPtV3E1wPH9caIlPk",
+			    authDomain: "fir-chat-20a3d.firebaseapp.com",
+			    databaseURL: "https://fir-chat-20a3d.firebaseio.com",
+			    projectId: "fir-chat-20a3d",
+			    storageBucket: "fir-chat-20a3d.appspot.com",
+			    messagingSenderId: "461212638022"
+		  	};
+		  	firebase.initializeApp(config);
+		   	var database = firebase.database();
+		   	var user_id = 1;
+	   		database.ref('users').child(user_id).on('child_added', function(current_user_snapshot) {
+	   			// data.forEach(function(child){
+		            var key = current_user_snapshot.key;
+		            // console.log(key);
+		            var value = current_user_snapshot.val();
+		            // console.log(value);			
+		        // });
+	   			//console.log(data.val());
+	   			if(key.includes("user_message")) { 
+	   				console.log(key);
+	   				console.log(value.text);			
+	   				$("#my_message_container").append('<p>' + value.text + '</p>'); 
+	   			} else {
+	   				console.log(key);
+	   				console.log(value.text);		
+	   				$("#support_message_container").append('<p>' + value.text + '</p>');  
+	   			}
+
+	   			
+			});
+			// database.ref('users').child(user_id).child("support").on('child_added', function(child) {
+	  //  			// data.forEach(function(child){
+		 //            var key = child.key;
+		 //            console.log(key);
+		 //            var value = child.val();
+		 //            console.log(value);			
+		 //        // });
+	  //  			//console.log(data.val());
+	  //  		    $("#support_message").append('<p>' + value + '</p>');  
+			// });
+			function chat() {
+				var message = document.getElementById('chat').value;
+				  var newPostKey = firebase.database().ref().child('users').push().key;
+				  var key = "user_message" + newPostKey;
+				firebase.database().ref('users').child(user_id).child(key).set({
+			    	text: message
+			  });
+			}
+		</script>
+	</head>
+	<body>
+
+		<h2>Chat Messages</h2>
+			<div id="my_message_container" class = "my_message_container"></div>
+			<div id="support_message_container" class = "support_message_container"></div>
+			<div class="input_field">
+				<input type="text" id = "chat" name="chat_message">
+				<button onClick = "chat();">Send!</button>
+			</div>
+	</body>
+</html>  		  
